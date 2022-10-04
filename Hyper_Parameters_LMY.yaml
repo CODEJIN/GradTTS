@@ -1,0 +1,129 @@
+Sound:
+    N_FFT: 1024
+    Mel_Dim: 80
+    Frame_Length: 1024
+    Frame_Shift: 256
+    Sample_Rate: 22050
+    Mel_F_Min: 0
+    Mel_F_Max: 8000
+    F0_Min: 50
+    F0_Max: 880
+
+Feature_Type: 'Mel' #'Spectrogram', 'Mel'
+
+Tokens: 104
+Emotions: 6
+
+Encoder:
+    Size: 192
+    Conv:
+        Stack: 3
+        Kernel_Size: 5
+        Dropout_Rate: 0.5
+    Transformer:
+        Positional_Encoding_Period: 90
+        Stack: 6
+        Head: 2
+        Dropout_Rate: 0.1
+        FFN:
+            Kernel_Size: 3
+            Dropout_Rate: 0.1
+
+Variance:
+    Duration:
+        Channels: 256
+        Kernel_Size: 17
+        Dropout_Rate: 0.1
+
+Diffusion:
+    Size: 256
+    Max_Step: 1000
+    Kernel_Size: 5
+    Stack: 20
+
+    Dilation_Cycle: 10
+    Stride: [16, 16]
+    Leaky_ReLU_Slope: 0.4
+
+Token_Path: 'D:/Datasets/22K.LMY/Token.yaml'
+Duration_Path: './Duration_KREN1391.pickle'
+Spectrogram_Range_Info_Path: 'D:/Datasets/22K.LMY/Spectrogram_Range_Info.yaml'
+Mel_Range_Info_Path: 'D:/Datasets/22K.LMY/Mel_Range_Info.yaml'
+Log_F0_Info_Path: 'D:/Datasets/22K.LMY/Log_F0_Info.yaml'
+Energy_Info_Path: 'D:/Datasets/22K.LMY/Energy_Info.yaml'
+Speaker_Info_Path: 'D:/Datasets/22K.LMY/Speaker_Info.yaml'
+Emotion_Info_Path: 'D:/Datasets/22K.LMY/Emotion_Info.yaml'
+Language_Info_Path: 'D:/Datasets/22K.LMY/Language_Info.yaml'
+Gender_Info_Path: 'D:/Datasets/22K.LMY/Gender_Info.yaml'
+Language_and_Gender_Info_by_Speaker_Path: 'D:/Datasets/22K.LMY/Language_and_Gender_Info_by_Speaker.yaml'
+Train:
+    Use_Pattern_Cache: true
+    Train_Pattern:
+        Path: 'D:/Datasets/22K.LMY/Train'
+        Metadata_File: 'METADATA.PICKLE'
+        Feature_Length:
+            Min: 50
+            Max: 1200
+        Text_Length:
+            Min: 1
+            Max: 200
+        Accumulated_Dataset_Epoch: 1   # This is to prevent slow down from torch.utils.data.DataLoader when the number of patterns is small.
+        Augmentation_Ratio: 0.20
+    Eval_Pattern:
+        Path: 'D:/Datasets/22K.LMY/Eval'
+        Metadata_File: 'METADATA.PICKLE'
+        Feature_Length:
+            Min: 50
+            Max: 1200
+        Text_Length:
+            Min: 10
+            Max: 200
+    Num_Workers: 0
+    Batch_Size: 128
+    Learning_Rate:
+        Initial: 2.0e-4
+        Warmup_Step: 4000
+    ADAM:
+        Beta1: 0.9
+        Beta2: 0.999
+        Epsilon: 1.0e-7
+    Lambda:
+        MLE: 1.0
+    Segment_Size: 128   # Feature based
+    Weight_Decay: 1.0e-6
+    Gradient_Norm: 1.0
+    Max_Step: 100000
+    Checkpoint_Save_Interval: 5000
+    Logging_Interval: 1
+    Evaluation_Interval: 1000
+    Inference_Interval: 5000
+    Initial_Inference: true
+    Inference_in_Train:
+        Text: [
+            '최근 디퓨전 기반의 생성모델이 다수 발표되고 있습니다.',
+            '귀신중에는 개그맨이 있습니다.',
+            ]
+
+Inference_Batch_Size: 16
+Ignore_Stop: true   # If true, inference is always progressed until max iteration (Stop tokens are ignored).
+
+Inference_Path: './results/LMY/Inference'
+Checkpoint_Path: './results/LMY/Checkpoint'
+Log_Path: './results/LMY/Log'
+
+Weights_and_Biases:
+    Use: true
+    # Use: false
+    Project: 'GradTTS'
+    Entity: 'codejin'
+    Name: 'LJ'
+    Save_Checkpoint:
+        Use: false
+        Interval: 50000 # Unlike local, The capacity of WandB is small.
+
+Use_Mixed_Precision: false  # Don't use mixed precision in this model.
+Use_Multi_GPU: false
+Device: '0'
+# Use_Multi_GPU: true
+# Device: '0,1,2,3,4,5,6,7'
+
